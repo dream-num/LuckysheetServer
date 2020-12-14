@@ -1,0 +1,30 @@
+# 配置server参数
+server:
+  port: 9004
+  servlet:
+    context-path: /luckysheet
+spring:
+  profiles:
+    active: @profiles.active@
+  application:
+    name: web
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+
+#redis通道名称
+redis.channel: luckysheet.channel
+#表格中块的大小，新增加时写入每一个sheet的第一个模块中
+row_size: 500
+col_size: 500
+#是否启用pgsql作为存储数据（0为是，1为否）目前只能设置为0
+pgSetUp: 0
+#使用服务器类型
+servertype: tomcat
+
+
+
