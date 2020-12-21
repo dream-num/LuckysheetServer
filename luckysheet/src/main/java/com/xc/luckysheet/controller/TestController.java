@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -37,7 +40,6 @@ public class TestController {
 
     @Autowired
     private PostgresJfGridUpdateService postgresJfGridUpdateService;
-
 
     @GetMapping("constant")
     public String getConstant(String param){
@@ -64,6 +66,7 @@ public class TestController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "key", value = "键", paramType = "query", required = true, dataType = "String")
     })
+
     @GetMapping("redis/getCache")
     public ResponseVO getCache(String key){
         return ResponseVO.successInstance(redisCacheService.getCache(key));
@@ -75,6 +78,7 @@ public class TestController {
         postgresJfGridUpdateService.initTestData();
         return ResponseVO.successInstance("success");
     }
+
     @ApiOperation(value = "初始化db单个",notes = "初始化db单个")
     @GetMapping("dbInit/one")
     public ResponseVO dbInit(String listId){
@@ -83,6 +87,10 @@ public class TestController {
         postgresJfGridUpdateService.initTestData(listName);
         return ResponseVO.successInstance("success");
     }
+
+
+
+
 
 
 }
