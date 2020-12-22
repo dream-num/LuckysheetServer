@@ -20,10 +20,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @SpringBootApplication(scanBasePackages = "com.xc",exclude={MongoAutoConfiguration.class})
 public class WebApplication extends SpringBootServletInitializer {
+
     public static void main(String[] args) {
         SpringApplication.run(WebApplication.class, args);
         log.info("webtest server is started");
     }
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(WebApplication.class);
