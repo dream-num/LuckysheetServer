@@ -651,7 +651,8 @@ public class PostgresJfGridUpdateService {
                 }
                 _dbObject.put("json_data", json_data);
                 //数据分组，删除原有数据，重新保存
-                List<DBObject> blocks = JfGridConfigModel.toDataSplit(_dbObject);
+                String rowCol=pgGridFileDao.getFirstBlockRowColByGridKey(gridKey);
+                List<DBObject> blocks = JfGridConfigModel.toDataSplit(rowCol,_dbObject);
                 boolean _result = pgGridFileDao.updateMulti2(blocks, mongodbKeys);
                 //boolean _result=false;
                 if (!_result) {
@@ -777,7 +778,8 @@ public class PostgresJfGridUpdateService {
                 }*/
                 _dbObject.put("json_data", json_data);
                 //数据分组，删除原有数据，重新保存
-                List<DBObject> blocks = JfGridConfigModel.toDataSplit(_dbObject);
+                String rowCol=pgGridFileDao.getFirstBlockRowColByGridKey(gridKey);
+                List<DBObject> blocks = JfGridConfigModel.toDataSplit(rowCol,_dbObject);
                 boolean _result = pgGridFileDao.updateMulti2(blocks, mongodbKeys);
                 if (!_result) {
                     return "更新失败";
@@ -1236,6 +1238,8 @@ public class PostgresJfGridUpdateService {
             HashMap<String, DBObject> _existsBlock = new HashMap<String, DBObject>();
             //不存在的块
             HashMap<String, DBObject> _noExistsBlock = new HashMap<String, DBObject>();
+            //获取行列
+            String rowCol=pgGridFileDao.getFirstBlockRowColByGridKey(gridKey);
 
             for (int x = 0; x < _count; x++) {
                 DBObject bson = dbObject.get(x);
@@ -1253,7 +1257,7 @@ public class PostgresJfGridUpdateService {
                     }
                 }
                 //获取数据所在块的编号
-                String block_id = JfGridConfigModel.getRange(r, c);
+                String block_id = JfGridConfigModel.getRange(r, c,rowCol);
 
                 boolean isExists = false;
                 DBObject _dbObject = null;
@@ -1425,8 +1429,10 @@ public class PostgresJfGridUpdateService {
                 return "list_id=" + gridKey + ",index=" + i + "的sheet不存在";
             }
 
+            //获取行列
+            String rowCol=pgGridFileDao.getFirstBlockRowColByGridKey(gridKey);
             //获取数据所在块的编号
-            String block_id = JfGridConfigModel.getRange(r, c);
+            String block_id = JfGridConfigModel.getRange(r, c,rowCol);
             log.info("block_id---Operation_v" + block_id);
             //1、先获取原数据（直接获取到某个sheet）
             DBObject _dbObject = pgGridFileDao.getCelldataByGridKey(gridKey, i, block_id);
@@ -1762,6 +1768,9 @@ public class PostgresJfGridUpdateService {
             Integer c = Integer.parseInt(columns.get(0).toString());//	单元格的列号
             Object all = bson.get("v");  //	单元格的值 v=null 删除单元格
 
+            //获取行列
+            String rowCol=pgGridFileDao.getFirstBlockRowColByGridKey(gridKey);
+
             //判断第一个块是否存在
             Integer isHave = pgGridFileDao.getFirstBlockByGridKey(gridKey, i);
             log.info("isHave---Operation_bv" + isHave);
@@ -1777,7 +1786,7 @@ public class PostgresJfGridUpdateService {
                 int cl = c;
                 for (Object v : arrayList) {
                     //获取数据所在块的编号
-                    String block_id = JfGridConfigModel.getRange(r, cl);
+                    String block_id = JfGridConfigModel.getRange(r, cl,rowCol);
                     boolean isExists = false;
                     DBObject _dbObject = null;
                     if (_existsBlock.containsKey(block_id)) {
@@ -2063,6 +2072,7 @@ public class PostgresJfGridUpdateService {
         DBObject bson=(DBObject) JSON.parse(strSheet);
         PgGridDataModel model=new PgGridDataModel();
         model.setBlock_id("fblock");
+        model.setRow_col("5_5");
         model.setIndex(index);
         model.setIs_delete(0);
         model.setJson_data(bson);

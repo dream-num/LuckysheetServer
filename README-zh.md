@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS "public"."luckysheet";
 CREATE TABLE "luckysheet" (
   "id" int8 NOT NULL,
   "block_id" varchar(200) COLLATE "pg_catalog"."default" NOT NULL,
+  "row_col" varchar(50),
   "index" varchar(200) COLLATE "pg_catalog"."default" NOT NULL,
   "list_id" varchar(200) COLLATE "pg_catalog"."default" NOT NULL,
   "status" int2 NOT NULL,

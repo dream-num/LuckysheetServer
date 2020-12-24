@@ -155,12 +155,16 @@ public class PostgresGridFileDao {
         return 0l;
     }
 
-    //查看第一块是否存在（控制块）
+    /**
+     * 查看第一块是否存在（控制块）
+     * @param gridKey
+     * @param index
+     * @return
+     */
     public Integer getFirstBlockByGridKey(String gridKey,String index){
         //默认获取第一块
         String sql="select count(1) from "+TableName+" p where p.block_id='fblock' and p.list_id=? and p.index=? ";
         try{
-
             return  jdbcTemplate_postgresql.queryForObject(sql, new Object[]{gridKey,index},Integer.class);
         }catch (Exception e){
             log.warn(e.getMessage());
@@ -168,12 +172,31 @@ public class PostgresGridFileDao {
         }
     }
 
-    //查看第一块是否存在（控制块）
+    /**
+     * 查看第一块是否存在（控制块）
+     * @param gridKey
+     * @return
+     */
     public String getFirstBlockIndexByGridKey(String gridKey){
         //默认获取第一块
         String sql="select p.index from "+TableName+" p where p.block_id='fblock' and p.list_id=? and p.status=1 ";
         try{
+            return  jdbcTemplate_postgresql.queryForObject(sql, new Object[]{gridKey},String.class);
+        }catch (Exception e){
+            log.warn(e.getMessage());
+            return null;
+        }
+    }
 
+    /**
+     * 获取第一块的行列信息（控制块）
+     * @param gridKey
+     * @return
+     */
+    public String getFirstBlockRowColByGridKey(String gridKey){
+        //默认获取第一块
+        String sql="select p.row_col from "+TableName+" p where p.block_id='fblock' and p.list_id=? and p.status=1 ";
+        try{
             return  jdbcTemplate_postgresql.queryForObject(sql, new Object[]{gridKey},String.class);
         }catch (Exception e){
             log.warn(e.getMessage());
@@ -189,12 +212,13 @@ public class PostgresGridFileDao {
      * @return
      */
     public String InsertIntoBatch(List<PgGridDataModel> models){
-        String sql = "insert into "+TableName+" (id,block_id,index,list_id,status,\"order\",json_data,is_delete) values " +
-                " (nextval('luckysheet_id_seq'),?,?,?,?,?,?,0)";
+        String sql = "insert into "+TableName+" (id,block_id,row_col,index,list_id,status,\"order\",json_data,is_delete) values " +
+                " (nextval('luckysheet_id_seq'),?,?,?,?,?,?,?,0)";
         List<Object[]>batch=new ArrayList<Object[]>();
         for(PgGridDataModel b : models){
             List<Object> objectList=new ArrayList<Object>();
             objectList.add(b.getBlock_id().trim());
+            objectList.add(b.getRow_col());
             objectList.add(b.getIndex());
             objectList.add(b.getList_id());
             objectList.add(b.getStatus());
@@ -418,11 +442,9 @@ public class PostgresGridFileDao {
         }
     }
 
-    RowMapper<PgGridDataModel> modelRowMapper = new RowMapper()
-    {
+    RowMapper<PgGridDataModel> modelRowMapper = new RowMapper(){
         public PgGridDataModel mapRow(ResultSet rs, int rowNum)
-                throws SQLException
-        {
+                throws SQLException {
             PgGridDataModel model = new PgGridDataModel();
 
             model.setBlock_id(rs.getString("block_id"));
@@ -752,13 +774,18 @@ public class PostgresGridFileDao {
     //添加jsonb
     //批量添加
     public String InsertBatchDb(List<DBObject>models){
-        String sql = "insert into "+TableName+" (id,block_id,index,list_id,status,\"order\",json_data,is_delete) values " +
-                " (nextval('luckysheet_id_seq'),?,?,?,?,?,?,0)";
+        String sql = "insert into "+TableName+" (id,block_id,row_col,index,list_id,status,\"order\",json_data,is_delete) values " +
+                " (nextval('luckysheet_id_seq'),?,?,?,?,?,?,?,0)";
         List<Object[]>batch=new ArrayList<Object[]>();
         int order=0;
         for(DBObject b : models){
             List<Object> objectList=new ArrayList<Object>();
             objectList.add(b.get("block_id").toString().trim());
+            if(b.containsField("row_col") && b.get("row_col")!=null){
+                objectList.add(b.get("row_col"));
+            }else{
+                objectList.add(null);
+            }
             objectList.add(b.get("index"));
             objectList.add(b.get("list_id"));
             if(b.containsField("status") && b.get("status")!=null){

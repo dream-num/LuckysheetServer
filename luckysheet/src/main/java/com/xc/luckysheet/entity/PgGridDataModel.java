@@ -11,6 +11,8 @@ import lombok.Data;
 public class PgGridDataModel {
 	Integer id;
     String list_id;
+    //本记录的行_列
+    String row_col;
     String index;
 
     Integer status;
