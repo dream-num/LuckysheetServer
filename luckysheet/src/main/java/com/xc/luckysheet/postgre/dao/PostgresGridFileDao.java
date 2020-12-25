@@ -257,7 +257,7 @@ public class PostgresGridFileDao {
      */
     public List<DBObject> getByGridKey_NOCelldata(String gridKey){
         try{
-            String sql="select id,block_id,index,list_id,status,json_data-'celldata' AS json_data,\"order\" from "+TableName+" p where p.block_id='fblock' and p.list_id=? and p.is_delete=0";
+            String sql="select id,block_id,index,list_id,status,json_data-'celldata' AS json_data,\"order\" from "+TableName+" p where p.block_id='fblock' and p.list_id=? and p.is_delete=0 order by p.order";
             List<Map<String, Object>> list=jdbcTemplate_postgresql.queryForList(sql, new Object[]{gridKey});
             List<DBObject> result=new ArrayList<DBObject>();
 
@@ -430,7 +430,11 @@ public class PostgresGridFileDao {
         }
     }
 
-    //按list_id获取，返回sheet集合
+    /**
+     * 按list_id获取，返回sheet集合
+     * @param list_id
+     * @return
+     */
     public List<PgGridDataModel> getByGridKey(String list_id){
         try{
             String sql="select * from "+TableName+" p where p.block_id='fblock' and p.list_id=? ";
@@ -720,7 +724,7 @@ public class PostgresGridFileDao {
         }
     }
 
-    //按list_id获取，返回指定sheet 当前sheet的全部分块数据（并合并）
+    //按list_id获取，返回指定sheet 当前sheet的全部分块数据（并合并）getMergeByGridKey
     //返回是DBObject，而下面这个方法返回仅仅只有celldata
     public DBObject getBlockMergeByGridKey(String gridKey,String index,List<String> mongodbKeys){
         DBObject _fblock=new BasicDBObject();

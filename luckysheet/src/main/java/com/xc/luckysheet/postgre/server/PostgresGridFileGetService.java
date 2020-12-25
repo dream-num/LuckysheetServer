@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -164,4 +165,26 @@ public class PostgresGridFileGetService {
         return _resultModel;
     }
 
+    /**
+     * 获取全部结构以及数据
+     * @param gridKey
+     * @return
+     */
+    public List<DBObject> getAllSheetByGridKey(String gridKey) {
+        //返回全部结构
+        List<DBObject>  dbObject=pgGridFileDao.getByGridKey_NOCelldata(gridKey);
+        if(dbObject!=null&&dbObject.size()>0){
+            //获取全部的index
+            List<String> indexs=dbObject.stream().map(k->k.get("index").toString()).collect(Collectors.toList());
+            //获取数据
+            LinkedHashMap celldatas=getByGridKeys(gridKey,indexs);
+            if(celldatas!=null&&celldatas.size()>0) {
+                for (DBObject _o : dbObject) {
+                    _o.put("celldata", celldatas.get(_o.get("index")));
+                }
+            }
+            return dbObject;
+        }
+        return null;
+    }
 }

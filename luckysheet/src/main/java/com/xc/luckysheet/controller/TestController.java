@@ -1,8 +1,10 @@
 package com.xc.luckysheet.controller;
 
+import com.mongodb.DBObject;
 import com.xc.common.api.ResponseVO;
 import com.xc.common.config.redis.RedisCacheService;
 import com.xc.common.utils.JsonUtil;
+import com.xc.luckysheet.postgre.server.PostgresGridFileGetService;
 import com.xc.luckysheet.postgre.server.PostgresJfGridUpdateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -40,6 +42,9 @@ public class TestController {
 
     @Autowired
     private PostgresJfGridUpdateService postgresJfGridUpdateService;
+
+    @Autowired
+    private PostgresGridFileGetService postgresGridFileGetService;
 
     @GetMapping("constant")
     public String getConstant(String param){
@@ -86,6 +91,13 @@ public class TestController {
         listName.add(listId);
         postgresJfGridUpdateService.initTestData(listName);
         return ResponseVO.successInstance("success");
+    }
+
+    @ApiOperation(value = "获取整个xls结构",notes = "初始化db单个")
+    @GetMapping("get/LuckySheetJson")
+    public ResponseVO getLuckySheetJson(String listId){
+        List<DBObject> list=postgresGridFileGetService.getAllSheetByGridKey(listId);
+        return ResponseVO.successInstance(list);
     }
 
 
