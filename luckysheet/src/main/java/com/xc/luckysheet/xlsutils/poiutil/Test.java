@@ -22,7 +22,7 @@ public class Test {
 
         OutputStream out = null;
         try {
-            out = new FileOutputStream("D:\\test.xls");
+            out = new FileOutputStream("/Users/cr/test.xls");
             XlsUtil.exportXlsFile(out,false,lists);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
