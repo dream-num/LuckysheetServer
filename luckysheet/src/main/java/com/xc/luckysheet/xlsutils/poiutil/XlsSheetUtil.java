@@ -3,6 +3,7 @@ package com.xc.luckysheet.xlsutils.poiutil;
 import com.mongodb.DBObject;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * sheet操作
@@ -38,13 +39,21 @@ public class XlsSheetUtil {
         Row row=sheet.getRow(0);
         row.setHeightInPoints(30);
     }
-    //设置列宽
+
+    /**
+     * 设置列宽
+     * 第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
+     * @param sheet
+     */
     private static void setColumnWidth(Sheet sheet){
         sheet.setColumnWidth(0,MSExcelUtil.pixel2WidthUnits(160));
     }
     //单元格样式
     private static void setCellStyle(Workbook wb){
         CellStyle cellStyle= wb.createCellStyle();
+
+        //是否自动换行
+        cellStyle.setWrapText(true);
 
         //设置背景色
         cellStyle.setFillBackgroundColor((short)13);
@@ -69,6 +78,12 @@ public class XlsSheetUtil {
         font.setFontHeightInPoints((short) 16);
         //是否粗体显示
         font.setBold(true);
+        //选择需要用到的字体格式
+        cellStyle.setFont(font);
+
+        //合并单元格
+        //参数1：起始行 参数2：终止行 参数3：起始列 参数4：终止列
+        //CellRangeAddress region1 = new CellRangeAddress(rowNumber, rowNumber, (short) 0, (short) 11);
 
     }
 }
