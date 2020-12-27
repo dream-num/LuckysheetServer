@@ -1,9 +1,8 @@
 package com.xc.luckysheet.xlsutils.poiutil;
 
 import com.mongodb.DBObject;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * sheet操作
@@ -42,5 +41,34 @@ public class XlsSheetUtil {
     //设置列宽
     private static void setColumnWidth(Sheet sheet){
         sheet.setColumnWidth(0,MSExcelUtil.pixel2WidthUnits(160));
+    }
+    //单元格样式
+    private static void setCellStyle(Workbook wb){
+        CellStyle cellStyle= wb.createCellStyle();
+
+        //设置背景色
+        cellStyle.setFillBackgroundColor((short)13);
+
+        //设置边框
+        //下边框
+        cellStyle.setBorderBottom(BorderStyle.DOUBLE);
+        //左边框
+        cellStyle.setBorderLeft(BorderStyle.DOUBLE);
+        //上边框
+        cellStyle.setBorderTop(BorderStyle.DOUBLE);
+        //右边框
+        cellStyle.setBorderRight(BorderStyle.DOUBLE);
+
+        //设置居中
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+        //设置字体
+        Font font = wb.createFont();
+        font.setFontName("黑体");
+        //字体大小
+        font.setFontHeightInPoints((short) 16);
+        //是否粗体显示
+        font.setBold(true);
+
     }
 }
