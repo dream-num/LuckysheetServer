@@ -439,7 +439,7 @@ public class XlsSheetUtil {
                     case "u":
                     case "g":{
                         //general 自动类型
-                        cell.setCellType(CellType._NONE);
+                        //cell.setCellType(CellType._NONE);
                         if(_i>=0){
                             style.setDataFormat(_i.shortValue());
                         }else{
