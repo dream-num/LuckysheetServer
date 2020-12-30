@@ -1,9 +1,7 @@
 package com.xc.luckysheet.xlsutils.poiutil;
 
 import com.mongodb.DBObject;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -50,10 +48,12 @@ public class XlsSheetUtil {
                 Row row=sheet.createRow(r);
                 //循环每一列
                 for(DBObject col:cellMap.get(r)){
-                    createCell(wb,row,col);
+                    createCell(wb,sheet,row,col);
                 }
             }
         }
+
+        setColumAndRow(dbObject,sheet);
 
     }
 
@@ -62,7 +62,7 @@ public class XlsSheetUtil {
      * @param row
      * @param dbObject
      */
-    private static void createCell(Workbook wb,Row row,DBObject dbObject){
+    private static void createCell(Workbook wb,Sheet sheet,Row row,DBObject dbObject){
         if(dbObject.containsField("c")) {
             Integer c = getStrToInt(dbObject.get("c"));
             if (c != null) {
@@ -101,25 +101,30 @@ public class XlsSheetUtil {
                     setBorderStyle(style,v_json,"bs_r","bc_r");
 
 
+                    //合并单元格
+                    //参数1：起始行 参数2：终止行 参数3：起始列 参数4：终止列
+                    //CellRangeAddress region1 = new CellRangeAddress(rowNumber, rowNumber, (short) 0, (short) 11);
+
                     //mc 合并单元格
-//                    if(v_json.containsField("mc")){
-//                        //是合并的单元格
-//                        DBObject mc=(DBObject)v_json.get("mc");
-//                        if(mc.containsField("rs") && mc.containsField("cs")){
-//                            //合并的第一个单元格
-//                            if(mc.containsField("r") && mc.containsField("c")){
-//                                Integer rs=getIntByDBObject(mc,"rs");
-//                                Integer cs=getIntByDBObject(mc,"cs");
-//                                Integer r=getIntByDBObject(mc,"r");
-//                                Integer c=getIntByDBObject(mc,"c");
-//                                cells.merge(r,c,rs,cs);
-//                            }
-//                        }else{
-//                            //不是合并的第一个单元格
-//                            cell.setStyle(style);
-//                            return;
-//                        }
-//                    }
+                    if(v_json.containsField("mc")){
+                        //是合并的单元格
+                        DBObject mc=(DBObject)v_json.get("mc");
+                        if(mc.containsField("rs") && mc.containsField("cs")){
+                            //合并的第一个单元格
+                            if(mc.containsField("r") && mc.containsField("c")){
+                                Integer _rs=getIntByDBObject(mc,"rs")-1;
+                                Integer _cs=getIntByDBObject(mc,"cs")-1;
+                                Integer _r=getIntByDBObject(mc,"r");
+                                Integer _c=getIntByDBObject(mc,"c");
+
+                                CellRangeAddress region = new CellRangeAddress(_r.shortValue(),(_r.shortValue()+_rs.shortValue()), _c.shortValue(),(_c.shortValue()+_cs.shortValue()));
+                                sheet.addMergedRegion(region);
+                            }
+                        }else{
+                            //不是合并的第一个单元格
+                            return;
+                        }
+                    }
 
 
                     //取v值 (在数据类型中处理)
@@ -132,7 +137,10 @@ public class XlsSheetUtil {
                     //bg 背景颜色
                     if(v_json.containsField("bg")){
                         String _v=getByDBObject(v_json,"bg");
-                        style.setFillBackgroundColor(ColorUtil.getColorByStr(_v));
+                        Short _color=ColorUtil.getColorByStr(_v);
+                        if(_color!=null) {
+                            style.setFillBackgroundColor(_color);
+                        }
                     }
 
                     //vt 垂直对齐    垂直对齐方式（0=居中，1=上，2=下）
@@ -176,7 +184,15 @@ public class XlsSheetUtil {
                     if(v_json.containsField("f")){
                         String _v=getByDBObject(v_json,"f");
                         if(_v.length()>0){
-                            cell.setCellFormula(_v);
+                            try {
+                                if(_v.startsWith("=")){
+                                    cell.setCellFormula(_v.substring(1));
+                                }else{
+                                    cell.setCellFormula(_v);
+                                }
+                            }catch (Exception ex){
+                                log.error("公式 {};Error:{}",_v,ex.toString());
+                            }
                         }
                     }
 
@@ -187,19 +203,43 @@ public class XlsSheetUtil {
         }
     }
 
-    //设置行高
-    private static void setRowHeight(Sheet sheet){
-        Row row=sheet.getRow(0);
-        row.setHeightInPoints(30);
-    }
-
     /**
-     * 设置列宽
-     * 第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
+     * 设置单元格，宽、高
+     * @param dbObject
      * @param sheet
      */
-    private static void setColumnWidth(Sheet sheet){
-        sheet.setColumnWidth(0,MSExcelUtil.pixel2WidthUnits(160));
+    private static void setColumAndRow(DBObject dbObject,Sheet sheet){
+        if(dbObject.containsField("config")){
+            DBObject config = (DBObject)dbObject.get("config");
+
+            if(config.containsField("columlen")){
+                DBObject columlen = (DBObject)config.get("columlen");
+                if(columlen!=null){
+                    for(String k:columlen.keySet()){
+                        Integer _i=getStrToInt(k);
+                        Integer _v=getStrToInt(columlen.get(k).toString());
+                        if(_i!=null && _v!=null){
+                            sheet.setColumnWidth(_i,MSExcelUtil.heightUnits2Pixel(_v.shortValue()));
+                        }
+                    }
+                }
+            }
+            if(config.containsField("rowlen")){
+                DBObject rowlen = (DBObject)config.get("rowlen");
+                if(rowlen!=null){
+                    for(String k:rowlen.keySet()){
+                        Integer _i=getStrToInt(k);
+                        Integer _v=getStrToInt(rowlen.get(k).toString());
+                        if(_i!=null && _v!=null){
+                            Row row=sheet.getRow(_i);
+                            if(row!=null) {
+                                row.setHeightInPoints(MSExcelUtil.pixel2WidthUnits(_v.shortValue()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -214,15 +254,22 @@ public class XlsSheetUtil {
 
         //ff 字体
         if(dbObject.containsField("ff")){
-            Integer _v=getIntByDBObject(dbObject,"ff");
-            if(_v!=null && ConstantUtil.ff_IntegerToName.containsKey(_v)){
-                font.setFontName(ConstantUtil.ff_IntegerToName.get(_v));
+            if(dbObject.get("ff") instanceof Integer){
+                Integer _v=getIntByDBObject(dbObject,"ff");
+                if(_v!=null && ConstantUtil.ff_IntegerToName.containsKey(_v)){
+                    font.setFontName(ConstantUtil.ff_IntegerToName.get(_v));
+                }
+            }else if(dbObject.get("ff") instanceof String){
+                font.setFontName(getByDBObject(dbObject,"ff"));
             }
         }
         //fc 字体颜色
         if(dbObject.containsField("fc")){
             String _v=getByDBObject(dbObject,"fc");
-            font.setColor(ColorUtil.getColorByStr(_v));
+            Short _color=ColorUtil.getColorByStr(_v);
+            if(_color!=null) {
+                font.setColor(_color);
+            }
         }
         //bl 粗体
         if(dbObject.containsField("bl")){
@@ -274,9 +321,7 @@ public class XlsSheetUtil {
                 }
             }
         }
-        //合并单元格
-        //参数1：起始行 参数2：终止行 参数3：起始列 参数4：终止列
-        //CellRangeAddress region1 = new CellRangeAddress(rowNumber, rowNumber, (short) 0, (short) 11);
+
     }
 
     /**
@@ -538,7 +583,7 @@ public class XlsSheetUtil {
                     Double _d=Double.parseDouble(_s);
                     return _d.intValue();
                 }catch (Exception ex){
-                    System.out.println(ex.toString());
+                    log.error(ex.getMessage());
                     return null;
                 }
             }

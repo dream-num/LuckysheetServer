@@ -2,6 +2,7 @@ package com.xc.luckysheet.xlsutils.poiutil;
 
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -10,11 +11,31 @@ import org.apache.poi.hssf.util.HSSFColor;
 /**
  * @author Administrator
  */
+@Slf4j
 public class ColorUtil {
 
     public static Short getColorByStr(String colorStr){
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFPalette palette = workbook.getCustomPalette();
+
+        if(colorStr.toLowerCase().startsWith("rgb")){
+            colorStr=colorStr.toLowerCase().replace("rgb(","").replace(")","");
+            String[] colors=colorStr.split(",");
+            if(colors.length==3){
+                try{
+                    int red = Integer.parseInt(colors[0].trim(),16);
+                    int green = Integer.parseInt(colors[1].trim(),16);
+                    int blue = Integer.parseInt(colors[2].trim(),16);
+
+                    HSSFColor hssfColor=palette.findSimilarColor(red,green,blue);
+                    return hssfColor.getIndex();
+                }catch (Exception ex){
+                    log.error(ex.toString());
+                    return null;
+                }
+            }
+            return null;
+        }
 
         if(colorStr.equals("#000")){
             colorStr="#000000";
@@ -37,7 +58,7 @@ public class ColorUtil {
                 HSSFColor hssfColor=palette.findSimilarColor(red,green,blue);
                 return hssfColor.getIndex();
             }catch (Exception ex){
-                System.out.println(ex.toString());
+                log.error(ex.toString());
                 return null;
             }
         }
