@@ -392,7 +392,9 @@ public class XlsSheetUtil {
             //String v=getByDBObject(v_json,"v");
             //cell.setValue(v);
             Object obj=getObjectByDBObject(dbObject,"v");
-            if(obj instanceof Double){
+            if(obj instanceof Number){
+                cell.setCellValue(Double.valueOf(obj.toString()));
+            }else if(obj instanceof Double){
                 cell.setCellValue((Double) obj);
             }else if(obj instanceof Date){
                 cell.setCellValue((Date)obj);
@@ -402,6 +404,8 @@ public class XlsSheetUtil {
                 cell.setCellValue((RichTextString) obj);
             }else if(obj instanceof String){
                 cell.setCellValue((String) obj);
+            }else{
+                cell.setCellValue(obj.toString());
             }
 
         }

@@ -156,7 +156,7 @@ public class TestController {
             out.write(data);
             out.closeEntry();
             out.finish();
-            System.out.println("down ok");
+            log.info("down ok");
             return null;
         }catch (Exception ex){
             return ResponseVO.errorInstance(ex.getMessage());
