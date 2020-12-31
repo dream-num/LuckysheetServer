@@ -219,7 +219,8 @@ public class XlsSheetUtil {
                         Integer _i=getStrToInt(k);
                         Integer _v=getStrToInt(columlen.get(k).toString());
                         if(_i!=null && _v!=null){
-                            sheet.setColumnWidth(_i,MSExcelUtil.heightUnits2Pixel(_v.shortValue()));
+                            //sheet.setColumnWidth(_i,MSExcelUtil.heightUnits2Pixel(_v.shortValue()))
+                            sheet.setColumnWidth(_i,_v.shortValue());
                         }
                     }
                 }
@@ -233,7 +234,8 @@ public class XlsSheetUtil {
                         if(_i!=null && _v!=null){
                             Row row=sheet.getRow(_i);
                             if(row!=null) {
-                                row.setHeightInPoints(MSExcelUtil.pixel2WidthUnits(_v.shortValue()));
+                                //row.setHeightInPoints(MSExcelUtil.pixel2WidthUnits(_v.shortValue()))
+                                row.setHeightInPoints(_v.shortValue());
                             }
                         }
                     }
@@ -381,6 +383,38 @@ public class XlsSheetUtil {
      * @param dbObject
      */
     private static void setFormatByCt(Workbook wb,Cell cell,CellStyle style,DBObject dbObject){
+
+        if(!dbObject.containsField("v") && dbObject.containsField("ct")){
+            /* 处理以下数据结构
+             {
+                "celldata": [{
+                    "c": 0,
+                    "r": 8,
+                    "v": {
+                        "ct": {
+                            "s": [{
+                                "v": "sdsdgdf\r\ndfgdfg\r\ndsfgdfgdf\r\ndsfgdfg"
+                            }],
+                            "t": "inlineStr",
+                            "fa": "General"
+                        }
+                    }
+                }]
+            }
+             */
+            DBObject ct=(DBObject)dbObject.get("ct");
+            if(ct.containsField("s")){
+                DBObject s=(DBObject)ct.get("s");
+                if(s instanceof List && ((List) s).size()>0){
+                    DBObject _s1=(DBObject)((List) s).get(0);
+                    if(_s1.containsField("v") && _s1.get("v")instanceof String){
+                        dbObject.put("v",_s1.get("v"));
+                        style.setWrapText(true);
+                    }
+                }
+
+            }
+        }
 
         //String v = "";  //初始化
         if(dbObject.containsField("v")){

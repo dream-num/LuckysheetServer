@@ -33,7 +33,7 @@ import org.apache.tools.zip.ZipOutputStream;
  * http://127.0.0.1:85/luckysheet/demo/
  * http://localhost:9004/luckysheet/test/constant?param=123
  * http://localhost:9004/luckysheet/test/down?listId=xc79500%23-8803%237c45f52b7d01486d88bc53cb17dcd2c3&fileName=list.xls
- * http://localhost:9004/luckysheet/test/down?listId=1079500%23-8803%237c45f52b7d01486d88bc53cb17dcd2c3&fileName=list.xls
+ * http://localhost:9004/luckysheet/test/down?listId=1079500%23-8803%237c45f52b7d01486d88bc53cb17dcd2xc&fileName=list.xls
  * @author Administrator
  */
 @Slf4j
