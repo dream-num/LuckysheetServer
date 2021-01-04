@@ -676,11 +676,16 @@ public class PostgresJfGridUpdateService {
      */
     private String Operation_drc(String gridKey, DBObject bson) {
         try {
-            String i = bson.get("i").toString();//	当前sheet的index值
-            String rc = bson.get("rc").toString();   //行操作还是列操作，值r代表行，c代表列
-            Integer index = null;//  	从第几行或者列开始删除
-            Integer len = null;// 	删除多少行或者列
-            DBObject mc = null;//     	需要修改的合并单元格信息
+            //当前sheet的index值
+            String i = bson.get("i").toString();
+            //行操作还是列操作，值r代表行，c代表列
+            String rc = bson.get("rc").toString();
+            //从第几行或者列开始删除
+            Integer index = null;
+            //删除多少行或者列
+            Integer len = null;
+            //需要修改的合并单元格信息
+            DBObject mc = null;
             BasicDBList borderInfo = null;
             if (bson.get("v") != null && bson instanceof DBObject) {
                 DBObject _v = (DBObject) bson.get("v");
@@ -789,6 +794,7 @@ public class PostgresJfGridUpdateService {
 
         } catch (Exception ex) {
             log.error(ex.getMessage());
+            return ex.getMessage();
         }
         return "";
     }
