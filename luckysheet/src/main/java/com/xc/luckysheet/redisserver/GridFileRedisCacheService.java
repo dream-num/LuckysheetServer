@@ -1,6 +1,6 @@
 package com.xc.luckysheet.redisserver;
 
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import com.xc.common.config.redis.RedisCacheService;
 import com.xc.common.config.redis.RedisQueueService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,10 +38,10 @@ public class GridFileRedisCacheService {
     private String qk_handle_content="lk:handler:";
 
 
-    public List<DBObject> rgetDbDataContent(String key){
+    public List<JSONObject> rgetDbDataContent(String key){
         try{
             String redisKey=dbdata_content+key;
-            List<DBObject> lists=redisCache.getListBySize(redisKey, -1);
+            List<JSONObject> lists=redisCache.getListBySize(redisKey, -1);
             if(lists!=null && lists.size()>0){
                 //从redis中删除
                 redisCache.delList(redisKey, lists.size());
@@ -59,7 +59,7 @@ public class GridFileRedisCacheService {
      * @param key
      * @param db
      */
-    public void raddDbContent(String key,DBObject db){
+    public void raddDbContent(String key,JSONObject db){
         String redisKey=dbdata_content+key;
         redisCache.addList(redisKey, db);
     }

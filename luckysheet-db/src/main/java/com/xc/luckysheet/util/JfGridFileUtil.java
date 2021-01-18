@@ -1,10 +1,8 @@
-package com.xc.luckysheet.utils;
+package com.xc.luckysheet.util;
 
-import com.google.gson.Gson;
-import com.mongodb.BasicDBList;
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +20,17 @@ public class JfGridFileUtil {
      * @param index
      * @return
      */
-    public static BasicDBList getSheetByIndex( DBObject dbObject,Integer index){
-        BasicDBList _resultModel=null;
+    public static JSONArray getSheetByIndex(JSONObject dbObject, Integer index){
+        JSONArray _resultModel=null;
         if(dbObject!=null && dbObject instanceof List){
-            List<DBObject> _list=(List<DBObject>)dbObject;
-            for(DBObject _o:_list){
-                if(_o.containsField("index")){
+            List<JSONObject> _list=(List<JSONObject>)dbObject;
+            for(JSONObject _o:_list){
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
-                            if(_o.containsField("celldata")){
-                                _resultModel=(BasicDBList)_o.get("celldata");
+                            if(_o.containsKey("celldata")){
+                                _resultModel=_o.getJSONArray("celldata");
                             }
                         }
                     }catch (Exception ex){
@@ -49,11 +47,11 @@ public class JfGridFileUtil {
      * @param dbObject
      * @return
      */
-    public static BasicDBList getSheetByIndex(DBObject dbObject){
-        BasicDBList _resultModel=null;
+    public static JSONArray getSheetByIndex(JSONObject dbObject){
+        JSONArray _resultModel=null;
         if(dbObject!=null){
-            if(dbObject.containsField("celldata")){
-                _resultModel=(BasicDBList)dbObject.get("celldata");
+            if(dbObject.containsKey("celldata")){
+                _resultModel=dbObject.getJSONArray("celldata");
             }
         }
         return _resultModel;
@@ -64,14 +62,14 @@ public class JfGridFileUtil {
      * @param dbObject
      * @return
      */
-    public static Integer getSheetCount(DBObject dbObject){
+    public static Integer getSheetCount(JSONObject dbObject){
         Integer _resultModel=0;
         if(dbObject!=null){
-            if(dbObject.containsField("jfgridfile")){
-                DBObject _bs=(DBObject)dbObject.get("jfgridfile");
+            if(dbObject.containsKey("jfgridfile")){
+                JSONObject _bs=dbObject.getJSONObject("jfgridfile");
                 return getSheetCount(_bs);
             }else if(dbObject instanceof List){
-                List<DBObject> _list=(List<DBObject>)dbObject;
+                List<JSONObject> _list=(List<JSONObject>)dbObject;
                 if(_list!=null){
                     _resultModel=_list.size();
                 }
@@ -86,14 +84,14 @@ public class JfGridFileUtil {
      * @param index
      * @return
      */
-    public static Integer getSheetPositionByIndex(DBObject dbObject,Integer index){
+    public static Integer getSheetPositionByIndex(JSONObject dbObject,Integer index){
         Integer _resultModel=null;
         if(dbObject!=null && dbObject instanceof List){
-            List<DBObject> _list=(List<DBObject>)dbObject;
+            List<JSONObject> _list=(List<JSONObject>)dbObject;
             //for(DBObject _o:_list){
             for(int x=0;x<_list.size();x++){
-                DBObject _o=_list.get(x);
-                if(_o.containsField("index")){
+                JSONObject _o=_list.get(x);
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
@@ -108,12 +106,12 @@ public class JfGridFileUtil {
         }
         return _resultModel;
     }
-    public static Integer getSheetPositionByIndex(List<DBObject> _list,String index){
+    public static Integer getSheetPositionByIndex(List<JSONObject> _list,String index){
         Integer _resultModel=null;
         if(_list!=null ){
             for(int x=0;x<_list.size();x++){
-                DBObject _o=_list.get(x);
-                if(_o.containsField("index")){
+                JSONObject _o=_list.get(x);
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
@@ -135,16 +133,16 @@ public class JfGridFileUtil {
      * @param index
      * @return
      */
-    public static List<String> getSheetKeyByIndex(List<DBObject> _list,Integer index){
+    public static List<String> getSheetKeyByIndex(List<JSONObject> _list,Integer index){
         List<String> _resultModel=new ArrayList<String>();
         if(_list!=null ){
             for(int x=0;x<_list.size();x++){
-                DBObject _o=_list.get(x);
-                if(_o.containsField("index")){
+                JSONObject _o=_list.get(x);
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
-                            if(_o.containsField("_id")){
+                            if(_o.containsKey("_id")){
                                 //_resultModel=_o.get("_id").toString();
                                 _resultModel.add(_o.get("_id").toString());
                             }
@@ -166,17 +164,17 @@ public class JfGridFileUtil {
      * @param k
      * @return
      */
-    public static DBObject getObjectByIndex(DBObject dbObject,Integer index,String k){
-        DBObject _resultModel=null;
+    public static JSONObject getObjectByIndex(JSONObject dbObject,Integer index,String k){
+        JSONObject _resultModel=null;
         if(dbObject!=null && dbObject instanceof List){
-            List<DBObject> _list=(List<DBObject>)dbObject;
-            for(DBObject _o:_list){
-                if(_o.containsField("index")){
+            List<JSONObject> _list=(List<JSONObject>)dbObject;
+            for(JSONObject _o:_list){
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
-                            if(_o.containsField(k)){
-                                _resultModel=(DBObject)_o.get(k);
+                            if(_o.containsKey(k)){
+                                _resultModel=_o.getJSONObject(k);
                             }
                             break;
                         }
@@ -195,11 +193,29 @@ public class JfGridFileUtil {
      * @param k
      * @return
      */
-    public static DBObject getObjectByIndex(DBObject dbObject,String k){
-        DBObject _resultModel=null;
+    public static Object getObjectByIndex(JSONObject dbObject,String k){
+        Object _resultModel=null;
         if(dbObject!=null){
-            if(dbObject.containsField(k)){
-                _resultModel=(DBObject)dbObject.get(k);
+            if(dbObject.containsKey(k)){
+                _resultModel=dbObject.get(k);
+            }
+        }
+        return _resultModel;
+    }
+    public static JSONObject getJSONObjectByIndex(JSONObject dbObject,String k){
+        JSONObject _resultModel=null;
+        if(dbObject!=null){
+            if(dbObject.containsKey(k)&& dbObject.get(k) instanceof JSONObject){
+                _resultModel=dbObject.getJSONObject(k);
+            }
+        }
+        return _resultModel;
+    }
+    public static JSONArray getJSONArrayByIndex(JSONObject dbObject,String k){
+        JSONArray _resultModel=null;
+        if(dbObject!=null){
+            if(dbObject.containsKey(k)&& dbObject.get(k) instanceof JSONArray){
+                _resultModel=dbObject.getJSONArray(k);
             }
         }
         return _resultModel;
@@ -213,16 +229,16 @@ public class JfGridFileUtil {
      * @param k
      * @return
      */
-    public static Integer getIntegerByIndex(DBObject dbObject,Integer index,String k){
+    public static Integer getIntegerByIndex(JSONObject dbObject,Integer index,String k){
         Integer _resultModel=null;
         if(dbObject!=null && dbObject instanceof List){
-            List<DBObject> _list=(List<DBObject>)dbObject;
-            for(DBObject _o:_list){
-                if(_o.containsField("index")){
+            List<JSONObject> _list=(List<JSONObject>)dbObject;
+            for(JSONObject _o:_list){
+                if(_o.containsKey("index")){
                     try{
                         Integer _index=Integer.parseInt(_o.get("index").toString());
                         if(index.equals(_index)){
-                            if(_o.containsField(k)){
+                            if(_o.containsKey(k)){
                                 _resultModel=(Integer)_o.get(k);
                             }
                             break;
@@ -242,10 +258,10 @@ public class JfGridFileUtil {
      * @param k
      * @return
      */
-    public static Integer getIntegerByIndex(DBObject dbObject,String k){
+    public static Integer getIntegerByIndex(JSONObject dbObject,String k){
         Integer _resultModel=null;
         if(dbObject!=null){
-            if(dbObject.containsField(k)){
+            if(dbObject.containsKey(k)){
                 _resultModel=(Integer)dbObject.get(k);
             }
         }
@@ -258,23 +274,16 @@ public class JfGridFileUtil {
      * @param k
      * @return
      */
-    public static DBObject getObjectByObject(DBObject dbObject,String k){
-        if(dbObject!=null && dbObject instanceof DBObject){
-            DBObject _d=(DBObject)dbObject;
-            if(_d.containsField(k)){
-                return (DBObject)_d.get(k);
+    public static JSONObject getObjectByObject(JSONObject dbObject,String k){
+        if(dbObject!=null){
+            if(dbObject.containsKey(k)){
+                return dbObject.getJSONObject(k);
             }
         }
         return null;
     }
 
-    public static ObjectId getObjectId(String gridKey)throws Exception{
-        try{
-           return  new ObjectId(gridKey);
-        }catch (Exception ex){
-            throw new RuntimeException("ObjectId 转换错误");
-        }
-    }
+
 
     /**
      * /获取测试用二维数组
@@ -282,7 +291,7 @@ public class JfGridFileUtil {
      * @param len
      * @return
      */
-    public static BasicDBList getTestData(String rc,int len){
+    public static JSONArray getTestData(String rc,int len){
         int row=0;
         int column=0;
         if(rc.equals("r")){
@@ -303,10 +312,10 @@ public class JfGridFileUtil {
                 strs[x][x1]=x+""+x1;
             }
         }
-        System.out.println(new Gson().toJson(strs));
-        List<Object> strs1=new Gson().fromJson(new Gson().toJson(strs),ArrayList.class);
+        System.out.println(JSONArray.toJSONString(strs));
+        List<Object> strs1=JSONObject.parseObject(JSONArray.toJSONString(strs),ArrayList.class);
 
-        BasicDBList _db=new BasicDBList();
+        JSONArray _db=new JSONArray();
         _db.addAll(strs1);
         return _db;
     }

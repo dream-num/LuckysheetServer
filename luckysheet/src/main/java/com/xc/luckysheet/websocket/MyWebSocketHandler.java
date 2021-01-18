@@ -2,14 +2,12 @@ package com.xc.luckysheet.websocket;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBObject;
-import com.xc.luckysheet.postgre.dao.PostgresGridFileDao;
-import com.xc.luckysheet.postgre.server.PostgresJfGridUpdateService;
+import com.xc.luckysheet.db.server.JfGridFileGetService;
+import com.xc.luckysheet.db.server.JfGridUpdateService;
 import com.xc.luckysheet.redisserver.GridFileRedisCacheService;
 import com.xc.luckysheet.redisserver.RedisLock;
 import com.xc.luckysheet.redisserver.RedisMessageModel;
 import com.xc.luckysheet.redisserver.RedisMessagePublish;
-import com.xc.luckysheet.utils.JSONParse;
 import com.xc.luckysheet.utils.MyStringUtil;
 import com.xc.luckysheet.utils.MyURLUtil;
 import com.xc.luckysheet.utils.Pako_GzipUtils;
@@ -45,23 +43,19 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private RedisMessagePublish redisMessagePublish;
     @Autowired
-    private PostgresJfGridUpdateService pgGridUpdateService;
+    private JfGridUpdateService jfGridUpdateService;
+    @Autowired
+    private JfGridFileGetService jfGridFileGetService;
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private GridFileRedisCacheService redisService;
-    @Autowired
-    private PostgresGridFileDao pgGridFileDao;
 
     /**
      * 先注册一个websocket服务器，将连接上的所有用户放进去
      * 外层key gridKey（文档id），内层key session ID（用户id）
      */
     private static final Hashtable<String, Hashtable<String, WSUserModel>> USER_SOCKET_SESSION_MAP;
-    /**
-     * 启用pgsql的开关
-     */
-    public static String pgSetUp = "";
     /**
      * 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
      */
@@ -109,9 +103,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             String contentReal = Pako_GzipUtils.unCompressToURI(content);
             log.info("消息解压后：" + MyStringUtil.getStringShow(contentReal));
             //content=contentReal;
-            DBObject bson = null;
+            JSONObject bson = null;
             try {
-                bson = (DBObject) JSONParse.parse(contentReal);
+                bson = JSONObject.parseObject(contentReal);
             } catch (Exception ex) {
                 log.error("json字符串转换错误str:" + JSONObject.toJSONString(contentReal));
                 return;
@@ -125,31 +119,23 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                     map.put("type", 3);
                     map.put("username", wsUserModel.getUserName());
                     map.put("id", "" + wsUserModel.getWs().getId());
-                    if ("0".equals(pgSetUp)) {
-                        pgGridUpdateService.Operation_mv(gridKey, bson);
-                    } else {
-                        //其它实现
-                    }
+                    jfGridUpdateService.Operation_mv(gridKey, bson);
                 } else if (bson.get("t").equals("rv_end")) {
                     //当前sheet的index值
                     String i = bson.get("i").toString();
                     String key = gridKey + wsUserModel.getWs().getId();
                     key = key + i;
-                    pgGridUpdateService.updateRvDbContent(gridKey, bson, key);
+                    jfGridUpdateService.updateRvDbContent(gridKey, bson, key);
                 } else if (bson.get("t").equals("rv")) {
                     String key = gridKey + wsUserModel.getWs().getId();
-                    pgGridUpdateService.getIndexRvForThread(key, bson);
+                    jfGridUpdateService.getIndexRvForThread(key, bson);
                 } else {
                     //其它操作
                     RedisLock redisLock = new RedisLock(redisTemplate, gridKey);
                     try {
                         if (redisLock.lock()) {
                             String _str = "";
-                            if ("0".equals(pgSetUp)) {
-                                _str = pgGridUpdateService.handleUpdate(gridKey, bson);
-                            } else {
-                                //其它实现
-                            }
+                            _str = jfGridUpdateService.handleUpdate(gridKey, bson);
 
                             if (_str.length() == 0) {
 
@@ -243,7 +229,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             //建立type为4的指令将所有加载期间其他人发送的指令进行收集
 
             String gridkey = ws.getGridKey();
-            String index = pgGridFileDao.getFirstBlockIndexByGridKey(gridkey);
+            String index = jfGridFileGetService.getFirstBlockIndexByGridKey(gridkey);
             String key = gridkey + index;
             Boolean flag = redisService.rgetFlagContent(key);
             //判断是否又存在sheet信息被重新加载

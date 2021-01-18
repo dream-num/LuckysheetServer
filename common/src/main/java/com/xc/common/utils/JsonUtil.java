@@ -32,6 +32,8 @@ public class JsonUtil {
     public static void main(String[]args){
         String str="{\"day1\":\"2019-10-10\",\"day2\":null}";
         Map<String,Date> map=GSONData.fromJson(str,Map.class);
+
+
     }
 
 

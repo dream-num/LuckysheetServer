@@ -74,6 +74,9 @@ public class ResponseVO implements Serializable {
      * @return
      */
     public static ResponseVO successInstance(Object data) {
+        if(data==null){
+            data="";
+        }
         ResponseVO res = successInstance();
         res.setData(data);
         return res;

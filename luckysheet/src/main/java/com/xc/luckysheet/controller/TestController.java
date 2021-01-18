@@ -1,11 +1,11 @@
 package com.xc.luckysheet.controller;
 
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import com.xc.common.api.ResponseVO;
 import com.xc.common.config.redis.RedisCacheService;
 import com.xc.common.utils.JsonUtil;
-import com.xc.luckysheet.postgre.server.PostgresGridFileGetService;
-import com.xc.luckysheet.postgre.server.PostgresJfGridUpdateService;
+import com.xc.luckysheet.db.server.JfGridFileGetService;
+import com.xc.luckysheet.db.server.JfGridUpdateService;
 import com.xc.luckysheet.xlsutils.poiutil.XlsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -46,10 +45,10 @@ public class TestController {
     private RedisCacheService redisCacheService;
 
     @Autowired
-    private PostgresJfGridUpdateService postgresJfGridUpdateService;
+    private JfGridUpdateService jfGridUpdateService;
 
     @Autowired
-    private PostgresGridFileGetService postgresGridFileGetService;
+    private JfGridFileGetService jfGridFileGetService;
 
     @GetMapping("constant")
     public String getConstant(String param){
@@ -84,7 +83,7 @@ public class TestController {
     @ApiOperation(value = "初始化db",notes = "初始化db")
     @GetMapping("dbInit")
     public ResponseVO dbInit(){
-        postgresJfGridUpdateService.initTestData();
+        jfGridUpdateService.initTestData();
         return ResponseVO.successInstance("success");
     }
 
@@ -93,14 +92,14 @@ public class TestController {
     public ResponseVO dbInit(String listId){
         List<String> listName=new ArrayList<String>();
         listName.add(listId);
-        postgresJfGridUpdateService.initTestData(listName);
+        jfGridUpdateService.initTestData(listName);
         return ResponseVO.successInstance("success");
     }
 
     @ApiOperation(value = "获取整个xls结构",notes = "初始化db单个")
     @GetMapping("get/LuckySheetJson")
     public ResponseVO getLuckySheetJson(String listId){
-        List<DBObject> list=postgresGridFileGetService.getAllSheetByGridKey(listId);
+        List<JSONObject> list=jfGridFileGetService.getAllSheetByGridKey(listId);
         return ResponseVO.successInstance(list);
     }
 
@@ -125,7 +124,7 @@ public class TestController {
         }else{
             zipFileName=fileName.substring(0,fileName.length()-4);
         }
-        List<DBObject> lists=postgresGridFileGetService.getAllSheetByGridKey(listId);
+        List<JSONObject> lists=jfGridFileGetService.getAllSheetByGridKey(listId);
         //输出的文件名
         String _fileName= null;
         try {

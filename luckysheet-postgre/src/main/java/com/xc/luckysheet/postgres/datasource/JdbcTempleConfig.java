@@ -1,9 +1,9 @@
-package com.xc.common.config.datasource;
+package com.xc.luckysheet.postgres.datasource;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.context.annotation.Bean;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -19,12 +19,12 @@ public class JdbcTempleConfig {
     /**
      * postgre数据源
      */
-    @Resource(name = "postgreDataSource")
-    private DataSource postgreDataSource;
+    @Resource(name = "postgresDataSource")
+    private DataSource postgresDataSource;
 
     @Bean(name="postgreJdbcTemplate")
     public JdbcTemplate createPostgreJdbcTemplate(){
-        return new JdbcTemplate(postgreDataSource);
+        return new JdbcTemplate(postgresDataSource);
     }
 
 }

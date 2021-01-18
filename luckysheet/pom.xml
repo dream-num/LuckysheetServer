@@ -57,6 +57,17 @@
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 数据库接口以及实现 -->
+        <dependency>
+            <groupId>com.xc</groupId>
+            <artifactId>luckysheet-db</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.xc</groupId>
+            <artifactId>luckysheet-postgre</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- websocket start -->
         <dependency>
@@ -95,18 +106,18 @@
             <version>2.10.3</version>
         </dependency>
 
-        <!-- mongodb driver start -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>1.9.0.RELEASE</version><!--$NO-MVN-MAN-VER$-->
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.6.0</version>
-        </dependency>
-        <!-- mongodb driver start -->
+        <!--&lt;!&ndash; mongodb driver start &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.data</groupId>-->
+            <!--<artifactId>spring-data-mongodb</artifactId>-->
+            <!--<version>1.9.0.RELEASE</version>&lt;!&ndash;$NO-MVN-MAN-VER$&ndash;&gt;-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.mongodb</groupId>-->
+            <!--<artifactId>mongo-java-driver</artifactId>-->
+            <!--<version>3.6.0</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; mongodb driver start &ndash;&gt;-->
 
         <!-- poi -->
         <dependency>

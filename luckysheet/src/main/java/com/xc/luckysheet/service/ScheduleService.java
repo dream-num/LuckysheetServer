@@ -1,6 +1,6 @@
 package com.xc.luckysheet.service;
 
-import com.xc.luckysheet.postgre.server.PostgresJfGridUpdateService;
+import com.xc.luckysheet.db.server.JfGridUpdateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +18,7 @@ import java.util.Date;
 public class ScheduleService {
 
     @Autowired
-    private PostgresJfGridUpdateService postgresJfGridUpdateService;
+    private JfGridUpdateService jfGridUpdateService;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -31,7 +31,7 @@ public class ScheduleService {
 
     @Scheduled(cron = "0 0 1 * * *")
     public void pgInit(){
-        postgresJfGridUpdateService.initTestData();
+        jfGridUpdateService.initTestData();
         System.out.println(format.format(new Date())+" luckysheet table init!!!");
     }
 

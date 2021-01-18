@@ -1,11 +1,10 @@
 package com.xc.luckysheet.controller;
 
-
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import com.xc.common.utils.JsonUtil;
+import com.xc.luckysheet.db.server.JfGridFileGetService;
 import com.xc.luckysheet.entity.LuckySheetGridModel;
 import com.xc.luckysheet.entity.enummodel.OperationTypeEnum;
-import com.xc.luckysheet.postgre.server.PostgresGridFileGetService;
 import com.xc.luckysheet.utils.Pako_GzipUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,13 +38,9 @@ public class JfGridFileController {
         /tu/api?id=listid
     */
 
-    /**
-     * 是否启用pgsql的开关
-     */
-    public static String pgSetUp="";
 
     @Autowired
-    private PostgresGridFileGetService pgGridFileGetService;
+    private JfGridFileGetService jfGridFileGetService;
 
     /**
      * 默认加载表格 分块
@@ -67,14 +62,10 @@ public class JfGridFileController {
                 if(_checkStr.length()>0){
                     return null;
                 }
-                List<DBObject> dbObject=null;
-                if("0".equals(pgSetUp)){
-                    //postgre
-                    dbObject=pgGridFileGetService.getDefaultByGridKey(gridKey);
-                }else{
-                    //其它数据库
-                }
+                List<JSONObject> dbObject=null;
+                dbObject=jfGridFileGetService.getDefaultByGridKey(gridKey);
                 if(dbObject!=null){
+                    delErrorKey(dbObject);
                     resultStr=JsonUtil.toJson(dbObject);
                 }
             } catch (Exception e) {
@@ -124,12 +115,7 @@ public class JfGridFileController {
                     return null;
                 }
                 LinkedHashMap dbObject=null;
-                if("0".equals(pgSetUp)){
-                    //postgre
-                    dbObject=pgGridFileGetService.getByGridKeys(_id, Arrays.asList(index));
-                }else{
-                    //mongo
-                }
+                dbObject=jfGridFileGetService.getByGridKeys(_id, Arrays.asList(index));
                 log.info("loadsheet--dbObject--");
                 if(dbObject!=null){
                     resultStr=JsonUtil.toJson(dbObject);
@@ -168,5 +154,26 @@ public class JfGridFileController {
     private String check(HttpServletRequest request, String _id, LuckySheetGridModel curmodel, OperationTypeEnum operationTypeEnum){
         //校验代码
         return "";
+    }
+
+
+
+    /**
+     * 数据返回时，去掉数组变字符串，引发错误的key
+     * 删除会发生错误的对象
+     */
+    private void delErrorKey(List<JSONObject> dbObject){
+        if(dbObject!=null){
+            for(JSONObject obj :dbObject){
+                delErrorKeyByCheck(obj,"calcChain");
+                delErrorKeyByCheck(obj,"luckysheet_alternateformat_save");
+                delErrorKeyByCheck(obj,"luckysheet_conditionformat_save");
+            }
+        }
+    }
+    private void delErrorKeyByCheck(JSONObject obj,String key){
+        if(obj.containsKey(key) && obj.get(key) instanceof String){
+            obj.remove(key);
+        }
     }
 }

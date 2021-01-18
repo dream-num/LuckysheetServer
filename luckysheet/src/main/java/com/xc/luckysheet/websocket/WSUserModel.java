@@ -3,9 +3,7 @@ package com.xc.luckysheet.websocket;
 import lombok.Data;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 /**
  * @author Administrator

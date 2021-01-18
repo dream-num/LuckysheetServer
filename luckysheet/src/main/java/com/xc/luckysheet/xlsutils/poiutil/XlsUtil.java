@@ -1,6 +1,6 @@
 package com.xc.luckysheet.xlsutils.poiutil;
 
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,7 +20,7 @@ public class XlsUtil {
      * @param isXlsx  是否是xlsx
      * @param dbObjectList 数据
      */
-    public static void exportXlsFile(OutputStream outputStream, Boolean isXlsx,List<DBObject> dbObjectList) throws IOException {
+    public static void exportXlsFile(OutputStream outputStream, Boolean isXlsx,List<JSONObject> dbObjectList) throws IOException {
         Workbook wb=null;
         if(isXlsx){
             wb=new XSSFWorkbook();

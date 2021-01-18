@@ -1,7 +1,6 @@
 package com.xc.luckysheet.redisserver;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
@@ -29,22 +28,22 @@ public class RedisMessageModel {
         this.gridkey=_gridkey;
         this.content=_content;
     }
-    public RedisMessageModel(DBObject jsonObject){
+    public RedisMessageModel(JSONObject jsonObject){
         if(jsonObject!=null) {
-            if (jsonObject.containsField("ipandport")) {
-                this.ipandport = jsonObject.get("ipandport").toString();
+            if (jsonObject.containsKey("ipandport")) {
+                this.ipandport = jsonObject.getString("ipandport");
             }
-            if (jsonObject.containsField("gridkey")) {
-                this.gridkey = jsonObject.get("gridkey").toString();
+            if (jsonObject.containsKey("gridkey")) {
+                this.gridkey = jsonObject.getString("gridkey");
             }
-            if (jsonObject.containsField("content")) {
-                this.content = jsonObject.get("content").toString();
+            if (jsonObject.containsKey("content")) {
+                this.content = jsonObject.getString("content");
             }
         }
     }
 
-    public DBObject toDBObject(){
-        DBObject jsonObject=new BasicDBObject();
+    public JSONObject toDBObject(){
+        JSONObject jsonObject=new JSONObject();
         jsonObject.put("ipandport",ipandport);
         jsonObject.put("gridkey",gridkey);
         jsonObject.put("content",content);

@@ -6,6 +6,8 @@
     <modules>
         <module>common</module>
         <module>luckysheet</module>
+        <module>luckysheet-db</module>
+        <module>luckysheet-postgre</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

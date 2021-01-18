@@ -1,4 +1,4 @@
-package com.xc.common.config.datasource;
+package com.xc.luckysheet.postgres.datasource;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,22 +22,20 @@ import javax.sql.DataSource;
 @Configuration
 public class ProfiledemoApplication implements TransactionManagementConfigurer {
 
-
     /**
      * postgre数据源
      */
-    @Resource(name = "postgreDataSource")
-    private DataSource postgreDataSource;
+    @Resource(name = "postgresDataSource")
+    private DataSource postgresDataSource;
 
 
-    @Bean(name = "postgreTxManager")
+    @Bean(name = "postgresTxManager")
     public PlatformTransactionManager postgreTxManager() {
-        return new DataSourceTransactionManager(postgreDataSource);
+        return new DataSourceTransactionManager(postgresDataSource);
     }
 
 
-
-    @Resource(name="postgreTxManager")
+    @Resource(name="postgresTxManager")
     private PlatformTransactionManager txManager;
 
     /**

@@ -1,6 +1,6 @@
 package com.xc.luckysheet.entity;
 
-import com.mongodb.DBObject;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,12 +45,12 @@ public class ConfigMergeModel {
      * @param mc
      * @return
      */
-    public static List<ConfigMergeModel>getListByDBObject(DBObject mc){
+    public static List<ConfigMergeModel>getListByDBObject(JSONObject mc){
         List<ConfigMergeModel> _list=new ArrayList<ConfigMergeModel>();
         if(mc!=null){
             for(String k:mc.keySet()){
                 try{
-                    ConfigMergeModel c=getByDBObject((DBObject)mc.get(k));
+                    ConfigMergeModel c=getByDBObject(mc.getJSONObject(k));
                     if(c!=null){
                         _list.add(c);
                     }
@@ -61,9 +61,9 @@ public class ConfigMergeModel {
         }
         return _list;
     }
-    private static ConfigMergeModel getByDBObject(DBObject mc){
+    private static ConfigMergeModel getByDBObject(JSONObject mc){
         if(mc!=null){
-            if(mc.containsField("r") && mc.containsField("c") && mc.containsField("rs") && mc.containsField("cs")){
+            if(mc.containsKey("r") && mc.containsKey("c") && mc.containsKey("rs") && mc.containsKey("cs")){
                try{
                    ConfigMergeModel c=new ConfigMergeModel();
                    c.r=Integer.parseInt(mc.get("r").toString());
