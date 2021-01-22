@@ -1832,8 +1832,9 @@ public class JfGridUpdateService {
             HashMap<String, JSONObject> _existsBlock = new HashMap<String, JSONObject>();
             //不存在的块
             HashMap<String, JSONObject> _noExistsBlock = new HashMap<String, JSONObject>();
-            List<ArrayList> data = (List<ArrayList>) all;
-            for (ArrayList arrayList : data) {
+            JSONArray data = (JSONArray) all;
+            for (int j=0; j<data.size(); j++) {
+                JSONArray arrayList=(JSONArray)data.get(j);
                 int cl = c;
                 for (Object v : arrayList) {
                     //获取数据所在块的编号
