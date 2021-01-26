@@ -37,22 +37,6 @@ import java.util.Map;
 @Service
 public class JfGridUpdateService {
 
-//    @Autowired
-//    @Qualifier("postgresRecordDataInsertHandle")
-//    private IRecordDataInsertHandle recordDataInsertHandle;
-//
-//    @Autowired
-//    @Qualifier("postgresRecordDataUpdataHandle")
-//    private IRecordDataUpdataHandle recordDataUpdataHandle;
-//
-//    @Autowired
-//    @Qualifier("postgresRecordDelHandle")
-//    private IRecordDelHandle recordDelHandle;
-//
-//    @Autowired
-//    @Qualifier("postgresRecordSelectHandle")
-//    private IRecordSelectHandle recordSelectHandle;
-
     @Resource(name = "postgresRecordDataInsertHandle")
     private IRecordDataInsertHandle recordDataInsertHandle;
 
@@ -801,7 +785,7 @@ public class JfGridUpdateService {
                    /* //对mc进行遍历，更新jfgridfile[1].data中合并单元格(mc)的数据
                     drc_arc_handle_mc(mc,_celldatas);*/
                 }
-                
+
 
                 /*if(rc.equals("r")){
                 	json_data.put("row",_row-len);
@@ -1824,7 +1808,7 @@ public class JfGridUpdateService {
 
             //判断第一个块是否存在
             Integer isHave = recordSelectHandle.getFirstBlockByGridKey(gridKey, i);
-            log.info("isHave---Operation_bv" + isHave);
+            log.info("isHave---Operation_bv {}" , isHave);
             if (isHave == null || isHave == 0) {
                 log.error("list_id=" + gridKey + ",index=" + i + "的sheet不存在");
             }
@@ -1855,7 +1839,7 @@ public class JfGridUpdateService {
                         if (_dbObject == null) {
                             //不存在新建一块处理
                             //集合
-                            JSONObject _celldata = new JSONObject();
+                            JSONArray _celldata = new JSONArray();
                             //文档
                             JSONObject db = new JSONObject();
                             db.put("celldata", _celldata);
@@ -1963,7 +1947,7 @@ public class JfGridUpdateService {
                     model.setBlock_id(_d.get("block_id").toString());
                     model.setIndex(_d.get("index").toString());
                     model.setList_id(_d.get("list_id").toString());
-                    JSONObject DB = _d.getJSONObject("celldata");
+                    JSONArray DB = _d.getJSONArray("celldata");
                     JSONObject json_data = new JSONObject();
                     json_data.put("celldata", DB);
                     model.setJson_data(json_data);
