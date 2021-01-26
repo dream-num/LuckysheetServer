@@ -1539,7 +1539,7 @@ public class JfGridUpdateService {
 
                 //Query query = new Query();
                 //query.addCriteria(Criteria.where("list_id").is(gridKey).and("index").is(i).and("block_id").is(block_id));
-                JSONObject query=getQuery(gridKey,i,JfGridConfigModel.FirstBlockID);
+                JSONObject query=getQuery(gridKey,i,block_id);
 
                 boolean _result = false;
                 if (v == null) {
