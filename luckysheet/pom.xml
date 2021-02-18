@@ -144,26 +144,27 @@
             <version>1.9.7</version>
         </dependency>
 
+        <!-- 数据库加密 -->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
 
     </dependencies>
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>postgres</id>
             <properties>
-                <profiles.active>dev</profiles.active>
+                <profiles.active>postgres</profiles.active>
             </properties>
         </profile>
         <profile>
-            <id>test</id>
+            <id>mysql</id>
             <properties>
-                <profiles.active>test</profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>prd</id>
-            <properties>
-                <profiles.active>prd</profiles.active>
+                <profiles.active>mysql</profiles.active>
             </properties>
         </profile>
     </profiles>

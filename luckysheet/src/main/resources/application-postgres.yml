@@ -4,12 +4,11 @@ logging:
 # 日志是否打印sql
 showSql: true
 
-
 spring:
   redis:
     host: 127.0.0.1
-    port: 3306
-    password: 12345
+    port: 3307
+    password: 123456
     timeout: 10000ms
     lettuce:
       pool:
@@ -22,9 +21,9 @@ spring:
 db:
   postgre:
     druid:
-      url: jdbc:postgresql://127.0.0.1:3308/luckysheetdb?useSSL=false
+      url: jdbc:postgresql://127.0.0.1:3306/luckysheetdb?useSSL=false
       driverClassName: org.postgresql.Driver
-      username: root
+      username: postgres
       password: 123456
       # 初始化大小，最小，最大
       initial-size: 8

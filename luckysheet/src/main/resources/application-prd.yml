@@ -1,6 +1,0 @@
-logging:
-  config: classpath:logback-spring.xml
-
-# 日志是否打印sql
-showSql: false
-
