@@ -25,7 +25,7 @@ db:
       url: jdbc:postgresql://127.0.0.1:3308/luckysheetdb?useSSL=false
       driverClassName: org.postgresql.Driver
       username: root
-      password: 123456
+      password: 1234567
       # 初始化大小，最小，最大
       initial-size: 8
       min-idle: 1
