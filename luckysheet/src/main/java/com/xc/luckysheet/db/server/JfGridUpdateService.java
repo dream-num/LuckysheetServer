@@ -37,16 +37,28 @@ import java.util.Map;
 @Service
 public class JfGridUpdateService {
 
-    @Resource(name = "postgresRecordDataInsertHandle")
+//    @Resource(name = "postgresRecordDataInsertHandle")
+//    private IRecordDataInsertHandle recordDataInsertHandle;
+//
+//    @Resource(name = "postgresRecordDataUpdataHandle")
+//    private IRecordDataUpdataHandle recordDataUpdataHandle;
+//
+//    @Resource(name = "postgresRecordDelHandle")
+//    private IRecordDelHandle recordDelHandle;
+//
+//    @Resource(name = "postgresRecordSelectHandle")
+//    private IRecordSelectHandle recordSelectHandle;
+
+    @Resource(name = "mysqlRecordDataInsertHandle")
     private IRecordDataInsertHandle recordDataInsertHandle;
 
-    @Resource(name = "postgresRecordDataUpdataHandle")
+    @Resource(name = "mysqlRecordDataUpdataHandle")
     private IRecordDataUpdataHandle recordDataUpdataHandle;
 
-    @Resource(name = "postgresRecordDelHandle")
+    @Resource(name = "mysqlRecordDelHandle")
     private IRecordDelHandle recordDelHandle;
 
-    @Resource(name = "postgresRecordSelectHandle")
+    @Resource(name = "mysqlRecordSelectHandle")
     private IRecordSelectHandle recordSelectHandle;
 
     @Autowired

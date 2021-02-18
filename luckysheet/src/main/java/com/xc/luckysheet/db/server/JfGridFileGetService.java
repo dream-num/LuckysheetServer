@@ -7,16 +7,11 @@ import com.xc.luckysheet.db.IRecordDataInsertHandle;
 import com.xc.luckysheet.db.IRecordDataUpdataHandle;
 import com.xc.luckysheet.db.IRecordDelHandle;
 import com.xc.luckysheet.db.IRecordSelectHandle;
-import com.xc.luckysheet.postgres.impl.RecordDataInsertHandle;
-import com.xc.luckysheet.postgres.impl.RecordDataUpdataHandle;
-import com.xc.luckysheet.postgres.impl.RecordDelHandle;
-import com.xc.luckysheet.postgres.impl.RecordSelectHandle;
 import com.xc.luckysheet.redisserver.GridFileRedisCacheService;
 import com.xc.luckysheet.util.JfGridFileUtil;
 import com.xc.luckysheet.utils.GzipHandle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,33 +26,28 @@ import java.util.stream.Collectors;
 @Service
 public class JfGridFileGetService {
 
-//    @Autowired
-//    @Qualifier()
+//    @Resource(name = "postgresRecordDataInsertHandle")
 //    private IRecordDataInsertHandle recordDataInsertHandle;
 //
-//    @Autowired
-//    @Qualifier("postgresRecordDataUpdataHandle")
+//    @Resource(name = "postgresRecordDataUpdataHandle")
 //    private IRecordDataUpdataHandle recordDataUpdataHandle;
 //
-//    @Autowired
-//    @Qualifier("postgresRecordDelHandle")
+//    @Resource(name = "postgresRecordDelHandle")
 //    private IRecordDelHandle recordDelHandle;
 //
-//    @Autowired
-//    @Qualifier("postgresRecordSelectHandle")
+//    @Resource(name = "postgresRecordSelectHandle")
 //    private IRecordSelectHandle recordSelectHandle;
 
-
-    @Resource(name = "postgresRecordDataInsertHandle")
+    @Resource(name = "mysqlRecordDataInsertHandle")
     private IRecordDataInsertHandle recordDataInsertHandle;
 
-    @Resource(name = "postgresRecordDataUpdataHandle")
+    @Resource(name = "mysqlRecordDataUpdataHandle")
     private IRecordDataUpdataHandle recordDataUpdataHandle;
 
-    @Resource(name = "postgresRecordDelHandle")
+    @Resource(name = "mysqlRecordDelHandle")
     private IRecordDelHandle recordDelHandle;
 
-    @Resource(name = "postgresRecordSelectHandle")
+    @Resource(name = "mysqlRecordSelectHandle")
     private IRecordSelectHandle recordSelectHandle;
 
     @Autowired

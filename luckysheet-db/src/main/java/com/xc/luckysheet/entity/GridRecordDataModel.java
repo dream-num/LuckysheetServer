@@ -13,7 +13,7 @@ public class GridRecordDataModel {
     /**
      * 记录序列
      */
-	Integer id;
+    Long id;
     /**
      * 文档ID
      */

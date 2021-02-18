@@ -2,10 +2,12 @@ package com.xc.luckysheet.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -318,5 +320,57 @@ public class JfGridFileUtil {
         JSONArray _db=new JSONArray();
         _db.addAll(strs1);
         return _db;
+    }
+
+    /**
+     * 给出查询条件
+     * @param query
+     * @return
+     */
+    public static String getCondition(JSONObject query){
+        String condition="";
+        if(query!=null) {
+            Map<String, Object> queryDB = query.getInnerMap();
+            for (String key : queryDB.keySet()) {
+                condition = condition + " and t." + key + "='" + queryDB.get(key) + "'";
+            }
+        }
+        return condition;
+    }
+    /**
+     * 给出查询条件
+     * @param query
+     * @return
+     */
+    public static String getCondition(JSONObject query,List arr){
+        String condition="";
+        if(query!=null&&arr!=null) {
+            Map<String,Object> queryDB=query.getInnerMap();
+            for (String key : queryDB.keySet()) {
+                arr.add(queryDB.get(key));
+                condition=condition+" and t."+key+"=? ";
+            }
+        }
+        return condition;
+    }
+
+    /**
+     * 从jsonObject中找到第一个key的名字
+     * @param jsonObject
+     * @return
+     */
+    public static String getKeyName(JSONObject jsonObject){
+        try{
+            if(jsonObject!=null&&jsonObject.size()>0) {
+                Map<String, Object> map = jsonObject.getInnerMap();
+                return map.keySet().stream().findFirst().get();
+//                for(String key:map.keySet()){
+//                    return key;
+//                }
+            }
+        }catch (Exception ex){
+            log.error("jsonObject:{};{}",jsonObject.toString(SerializerFeature.WriteMapNullValue),ex.toString());
+        }
+        return "";
     }
 }

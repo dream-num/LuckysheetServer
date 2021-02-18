@@ -35,8 +35,13 @@ public class WebApplication extends SpringBootServletInitializer {
         return builder.sources(WebApplication.class);
     }
 
+    /**
+     * mysqlTxManager postgresTxManager
+     * @param platformTransactionManager
+     * @return
+     */
     @Bean
-    public Object testBean(@Qualifier("postgresTxManager") PlatformTransactionManager platformTransactionManager){
+    public Object testBean(@Qualifier("mysqlTxManager") PlatformTransactionManager platformTransactionManager){
         //启动类中添加如下方法，Debug测试，能知道自动注入的是 PlatformTransactionManager 接口的哪个实现类
         System.out.println(">>>>>>>>>>" + platformTransactionManager.getClass().getName());
         return new Object();
