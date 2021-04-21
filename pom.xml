@@ -9,6 +9,7 @@
         <module>luckysheet-db</module>
         <module>luckysheet-mysql</module>
         <module>luckysheet-postgre</module>
+        <module>luckysheet-mongo</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
