@@ -1,0 +1,26 @@
+logging:
+  config: classpath:logback-spring.xml
+
+# 日志是否打印sql
+showSql: false
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 3307
+    password: 123456
+    timeout: 10000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+    database: 0
+
+
+  #数据源配置
+  data:
+    mongodb:
+      #数据库需要密码认证
+      uri: mongodb://test:123456@127.0.0.1:27017/test
