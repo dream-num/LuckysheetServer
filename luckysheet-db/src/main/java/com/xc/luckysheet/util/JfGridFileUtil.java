@@ -29,8 +29,7 @@ public class JfGridFileUtil {
             for(JSONObject _o:_list){
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             if(_o.containsKey("celldata")){
                                 _resultModel=_o.getJSONArray("celldata");
                             }
@@ -95,8 +94,7 @@ public class JfGridFileUtil {
                 JSONObject _o=_list.get(x);
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             _resultModel=x;
                             break;
                         }
@@ -115,8 +113,7 @@ public class JfGridFileUtil {
                 JSONObject _o=_list.get(x);
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             _resultModel=x;
                             break;
                         }
@@ -142,8 +139,7 @@ public class JfGridFileUtil {
                 JSONObject _o=_list.get(x);
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             if(_o.containsKey("_id")){
                                 //_resultModel=_o.get("_id").toString();
                                 _resultModel.add(_o.get("_id").toString());
@@ -173,8 +169,7 @@ public class JfGridFileUtil {
             for(JSONObject _o:_list){
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             if(_o.containsKey(k)){
                                 _resultModel=_o.getJSONObject(k);
                             }
@@ -238,8 +233,7 @@ public class JfGridFileUtil {
             for(JSONObject _o:_list){
                 if(_o.containsKey("index")){
                     try{
-                        Integer _index=Integer.parseInt(_o.get("index").toString());
-                        if(index.equals(_index)){
+                        if(index.equals(_o.get("index").toString())){
                             if(_o.containsKey(k)){
                                 _resultModel=(Integer)_o.get(k);
                             }
