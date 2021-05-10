@@ -6,22 +6,25 @@ import com.xc.common.config.redis.RedisCacheService;
 import com.xc.common.utils.JsonUtil;
 import com.xc.luckysheet.db.server.JfGridFileGetService;
 import com.xc.luckysheet.db.server.JfGridUpdateService;
+import com.xc.luckysheet.entity.GridRecordDataModel;
+import com.xc.luckysheet.utils.TimeUtil;
 import com.xc.luckysheet.xlsutils.poiutil.XlsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipOutputStream;
 
 /**
  * jar启动
@@ -49,6 +52,9 @@ public class TestController {
 
     @Autowired
     private JfGridFileGetService jfGridFileGetService;
+
+    @Autowired
+    JfGridUpdateService postgresJfGridUpdateService;
 
     @GetMapping("constant")
     public String getConstant(String param){
@@ -164,7 +170,36 @@ public class TestController {
 
     }
 
-
+    /**
+     * @param file EXCEL文件
+     * @description 导入EXCEL
+     * @author zhouhang
+     * @date 2021/4/25
+     */
+    @PostMapping("/import_excel")
+    public ResponseVO importExcel(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
+        try {
+            InputStream inputStream = file.getInputStream();
+            if (Objects.requireNonNull(file.getOriginalFilename()).endsWith(".xls") || file.getOriginalFilename().endsWith(".xlsx")) {
+                Workbook workbook = WorkbookFactory.create(inputStream);
+                //读取EXCEL
+                List<GridRecordDataModel> modelList = XlsUtil.readExcel(workbook);
+                String fileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+                String docCode = TimeUtil.getTodayBeginTime() + "#-" + (int) (Math.random() * 100) + "#-" + UUID.randomUUID().toString().replace("-", "");
+                //插入文档数据
+                postgresJfGridUpdateService.initImportExcel(modelList, docCode);
+                Map<String, String> map = new HashMap<>(2);
+                map.put("docName", fileName);
+                map.put("docCode", docCode);
+                return ResponseVO.successInstance(map);
+            } else {
+                return ResponseVO.errorInstance("无效文件");
+            }
+        } catch (Exception e) {
+            log.error("", e);
+            return ResponseVO.errorInstance(e.getMessage());
+        }
+    }
 
 
 
