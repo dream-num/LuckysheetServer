@@ -14,21 +14,20 @@ import com.xc.luckysheet.db.IRecordSelectHandle;
 import com.xc.luckysheet.entity.ConfigMergeModel;
 import com.xc.luckysheet.entity.GridRecordDataModel;
 import com.xc.luckysheet.entity.LuckySheetGridModel;
+import com.xc.luckysheet.entity.enummodel.DisabledTypeEnum;
 import com.xc.luckysheet.entity.enummodel.SheetOperationEnum;
 import com.xc.luckysheet.redisserver.GridFileRedisCacheService;
 import com.xc.luckysheet.redisserver.RedisLock;
 import com.xc.luckysheet.util.JfGridFileUtil;
 import com.xc.luckysheet.utils.GzipHandle;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Administrator
@@ -2115,7 +2114,7 @@ public class JfGridUpdateService {
         String result=insert(models);
         log.info(result);
     }
-    private GridRecordDataModel strToModel(String list_id, String index, int status, int order){
+    public static GridRecordDataModel strToModel(String list_id, String index, int status, int order){
         String strSheet="{\"row\":84,\"name\":\"reSheetName\",\"chart\":[],\"color\":\"\",\"index\":\"reIndex\",\"order\":reOrder,\"column\":60,\"config\":{},\"status\":reStatus,\"celldata\":[],\"ch_width\":4748,\"rowsplit\":[],\"rh_height\":1790,\"scrollTop\":0,\"scrollLeft\":0,\"visibledatarow\":[],\"visibledatacolumn\":[],\"jfgird_select_save\":[],\"jfgrid_selection_range\":{}}";
         strSheet=strSheet.replace("reSheetName","Sheet"+index).replace("reIndex",index).replace("reOrder",order+"").replace("reStatus",status+"");
 
@@ -2139,4 +2138,51 @@ public class JfGridUpdateService {
         query.put("block_id",blockId);
         return query;
     }
+
+    /**
+     * @param docCode   文档code
+     * @param modelList 文档数据
+     * @description 初始化导入文档
+     * @author zhouhang
+     * @date 2021/4/22
+     */
+    public void initImportExcel(List<GridRecordDataModel> modelList, String docCode) {
+        int index = 1;
+        List<GridRecordDataModel> addList = new ArrayList<>();
+        for (GridRecordDataModel model : modelList) {
+            model.setList_id(docCode);
+            if (CollectionUtils.isNotEmpty(model.getDataList())) {
+                Map<String, List<JSONObject>> map = new HashMap<>(model.getDataList().size() / 5);
+                for (JSONObject data : model.getDataList()) {
+                    String blockId = JfGridConfigModel.getRange(data.getIntValue("r"), data.getIntValue("c"), model.getRow_col());
+                    List<JSONObject> list = map.get(blockId);
+                    if (Objects.isNull(list)) {
+                        list = new ArrayList<>();
+                        list.add(data);
+                        map.put(blockId, list);
+                    } else {
+                        list.add(data);
+                    }
+                }
+                //生成GridRecordDataModel对象
+                for (Map.Entry<String, List<JSONObject>> entry : map.entrySet()) {
+                    GridRecordDataModel newDataModel = new GridRecordDataModel();
+                    newDataModel.setList_id(docCode);
+                    newDataModel.setBlock_id(entry.getKey());
+                    newDataModel.setIndex(index + "");
+                    newDataModel.setStatus(0);
+                    newDataModel.setIs_delete(DisabledTypeEnum.ENABLE.getIndex());
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("celldata", entry.getValue());
+                    newDataModel.setJson_data(jsonObject);
+                    addList.add(newDataModel);
+                }
+            }
+            index++;
+        }
+        //插入数据
+        addList.addAll(modelList);
+        recordDataInsertHandle.InsertIntoBatch(addList);
+    }
+
 }

@@ -3,9 +3,14 @@ package com.xc.luckysheet.xlsutils.poiutil;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 
 /**
@@ -13,6 +18,8 @@ import org.apache.poi.hssf.util.HSSFColor;
  */
 @Slf4j
 public class ColorUtil {
+
+    private static final String S = "0123456789ABCDEF";
 
     public static Short getColorByStr(String colorStr){
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -64,4 +71,63 @@ public class ColorUtil {
         }
         return null;
     }
+
+    /**
+     * RGB转换成十六进制
+     *
+     * @param r
+     * @param g
+     * @param b
+     * @return
+     */
+    public static String convertRGBToHex(short r, short g, short b) {
+        String hex = "";
+        if (r >= 0 && r < 256 && g >= 0 && g < 256 && b >= 0 && b < 256) {
+            int x, y, z;
+            x = r % 16;
+            r = (short) ((r - x) / 16);
+            y = g % 16;
+            g = (short) ((g - y) / 16);
+            z = b % 16;
+            b = (short) ((b - z) / 16);
+            hex = "#" + S.charAt(r) + S.charAt(x) + S.charAt(g) + S.charAt(y) + S.charAt(b) + S.charAt(z);
+        }
+        return hex;
+    }
+
+    /**
+     * @param cell 单元格
+     * @return 转换RGB颜色值
+     * @description tint转换RBG
+     * @author zhouhang
+     * @date 2021/4/26
+     */
+    public static String getFillColorHex(Cell cell) {
+        String fillColorString = null;
+        if (cell != null) {
+            CellStyle cellStyle = cell.getCellStyle();
+            Color color = cellStyle.getFillForegroundColorColor();
+            if (color instanceof XSSFColor) {
+                XSSFColor xssfColor = (XSSFColor) color;
+                byte[] argb = xssfColor.getARGB();
+                fillColorString = convertRGBToHex((short) (argb[1] & 0xFF), (short) (argb[2] & 0xFF), (short) (argb[3] & 0xFF));
+                // TODO: 2021/4/26 添加透明度
+//                if (xssfColor.hasTint()) {
+//                    fillColorString += " * " + xssfColor.getTint();
+//                    byte[] rgb = xssfColor.getRGBWithTint();
+//                    fillColorString += " = [" + (argb[0] & 0xFF) + ", " + (rgb[0] & 0xFF) + ", " + (rgb[1] & 0xFF) + ", " + (rgb[2] & 0xFF) + "]";
+//                }
+            } else if (color instanceof HSSFColor) {
+                HSSFColor hssfColor = (HSSFColor) color;
+                short[] rgb = hssfColor.getTriplet();
+                fillColorString = convertRGBToHex((short) (rgb[0] & 0xFF), (short) (rgb[1] & 0xFF), (short) (rgb[2] & 0xFF));
+                //去除黑色背景
+                if (StringUtils.equals("#000000", fillColorString)) {
+                    return null;
+                }
+            }
+        }
+        return fillColorString;
+    }
+
 }

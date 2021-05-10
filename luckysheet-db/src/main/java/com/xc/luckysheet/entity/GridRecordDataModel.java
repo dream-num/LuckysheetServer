@@ -4,6 +4,8 @@ package com.xc.luckysheet.entity;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 存储对象类
  * @author Administrator
@@ -46,5 +48,10 @@ public class GridRecordDataModel {
      * 是否删除
      */
     Integer is_delete;
+
+    /**
+     * sheet页数据 未编号分组
+     */
+    List<JSONObject> dataList;
 
 }
