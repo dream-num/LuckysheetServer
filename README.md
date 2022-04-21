@@ -8,6 +8,10 @@ English| [简体中文](./README-zh.md)
 ## Demo
 - [Cooperative editing demo](http://luckysheet.lashuju.com/demo/)(Note: Please do not operate frequently to prevent the server from crashing)
 
+## Development
+
+[Use MySQL Tutorial for Beginners](https://github.com/mengshukeji/LuckysheetServer/wiki/Use-MySQL-Tutorial-for-Beginners)
+
 ## Deploy
 - [LuckysheetServer Starter](https://github.com/mengshukeji/LuckysheetServerStarter)
 
